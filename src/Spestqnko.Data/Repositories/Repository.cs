@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Spestqnko.Data.Repositories
 {
-    public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
+    public class Repository<TEntity> : IRepository<TEntity> where TEntity : class, IModel
     {
         protected readonly DbContext Context;
 
@@ -30,17 +30,17 @@ namespace Spestqnko.Data.Repositories
 
         public IEnumerable<TEntity> Find(Expression<Func<TEntity, bool>> predicate)
         {
-            return Context.Set<TEntity>().Where(predicate);
+            return Context.SetIncludeAll<TEntity>().Where(predicate);
         }
 
         public async Task<IEnumerable<TEntity>> GetAllAsync()
         {
-            return await Context.Set<TEntity>().ToListAsync();
+            return await Context.SetIncludeAll<TEntity>().ToListAsync();
         }
 
-        public ValueTask<TEntity> GetByIdAsync(Guid id)
+        public Task<TEntity> GetByIdAsync(Guid id)
         {
-            return Context.Set<TEntity>().FindAsync(id);
+            return new Task<TEntity>(() => Context.SetIncludeAll<TEntity>().SingleOrDefault(t => t.Id == id));
         }
 
         public void Remove(TEntity entity)
@@ -56,6 +56,19 @@ namespace Spestqnko.Data.Repositories
         public Task<TEntity> SingleOrDefaultAsync(Expression<Func<TEntity, bool>> predicate)
         {
             return Context.Set<TEntity>().SingleOrDefaultAsync(predicate);
+        }
+    }
+
+    public static class RepositoryExtensions
+    {
+        public static IQueryable<TEntity> SetIncludeAll<TEntity>(this DbContext context) where TEntity : class, IModel
+        {
+            var query = context.Set<TEntity>().AsQueryable();
+
+            foreach (var property in context.Model.FindEntityType(typeof(TEntity)).GetNavigations())
+                query = query.Include(property.Name);
+
+            return query;
         }
     }
 }

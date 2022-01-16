@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Spestqnko.Core.Models
 {
-    public class User : IdentityUser<Guid>
+    public class User : IdentityUser<Guid>, IModel
     {
         public string UserName { get; set; }
         public byte[] PWSalt { get; set; }

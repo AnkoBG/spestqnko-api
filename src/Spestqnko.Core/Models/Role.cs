@@ -2,7 +2,7 @@
 
 namespace Spestqnko.Core.Models
 {
-    public class Role : IdentityRole<Guid>
+    public class Role : IdentityRole<Guid>, IModel
     {
 
     }

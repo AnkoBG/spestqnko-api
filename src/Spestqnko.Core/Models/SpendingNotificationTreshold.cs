@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Spestqnko.Core.Models
 {
     [Table("SpendingNotificationTresholds")]
-    public class SpendingNotificationTreshold
+    public class SpendingNotificationTreshold : IModel
     {
         [Key]
         public Guid Id { get; set; }

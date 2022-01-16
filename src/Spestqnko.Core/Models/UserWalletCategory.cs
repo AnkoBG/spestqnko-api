@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Spestqnko.Core.Models
 {
     [Table("UserWalletCategories")]
-    public class UserWalletCategory
+    public class UserWalletCategory : IModel
     {
         [Key]
         public Guid Id { get; set; }

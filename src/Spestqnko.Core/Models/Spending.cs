@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Spestqnko.Core.Models
 {
     [Table("Spendings")]
-    public class Spending
+    public class Spending : IModel
     {
         [Key]
         public Guid Id { get; set; }

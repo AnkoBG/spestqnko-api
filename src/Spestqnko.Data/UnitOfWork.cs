@@ -49,33 +49,12 @@ namespace Spestqnko.Data
             _context.Dispose();
         }
 
-        public IRepository<TEntity> GetRepository<TEntity>() where TEntity : class
+        public IRepository<TEntity> GetRepository<TEntity>() where TEntity : class, IModel
         {
-            switch (typeof(TEntity)) 
-            {
-                case Type type when type == typeof(Category):
-                    return (IRepository<TEntity>)Categories;
-                case Type type when type == typeof(Notification):
-                    return (IRepository<TEntity>)Notifications;
-                case Type type when type == typeof(Role):
-                    return (IRepository<TEntity>)Roles;
-                case Type type when type == typeof(SpendingNotificationTreshold):
-                    return (IRepository<TEntity>)SpendingNotificationTresholds;
-                case Type type when type == typeof(Spending):
-                    return (IRepository<TEntity>)Spendings;
-                case Type type when type == typeof(User):
-                    return (IRepository<TEntity>)Users;
-                case Type type when type == typeof(UserWalletCategory):
-                    return (IRepository<TEntity>)UserWalletCategories;
-                case Type type when type == typeof(UserWallet):
-                    return (IRepository<TEntity>)UserWallets;
-                case Type type when type == typeof(Wallet):
-                    return (IRepository<TEntity>)Wallets;
-            }
-
-#pragma warning disable CS8603 // Possible null reference return.
-            return null;
-#pragma warning restore CS8603 // Possible null reference return.
+            return
+                (IRepository<TEntity>)typeof(UnitOfWork).GetProperties()
+                .SingleOrDefault(p => typeof(IRepository<TEntity>).IsAssignableFrom(p.PropertyType))
+                ?.GetValue(this);
         }
     }
 }

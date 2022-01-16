@@ -4,7 +4,9 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Spestqnko.Api.Models.User;
 using Spestqnko.Api.Settings;
+using Spestqnko.Core.Models;
 using Spestqnko.Core.Services;
+using Spestqnko.Service.Exceptions;
 using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -31,7 +33,7 @@ namespace Spestqnko.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<string>> Index()
+        public async Task<ActionResult<string>> GetAll()
         {
             var users = await _userService.GetAll();
 
@@ -42,11 +44,46 @@ namespace Spestqnko.Api.Controllers
         [HttpPost("authenticate")]
         public async Task<IActionResult> Authenticate([FromBody]AuthenticateModel model)
         {
-            var user = await _userService.Authenticate(model.Username, model.Password);
+            try
+            {
+                var user = await _userService.Authenticate(model.Username, model.Password);
 
-            if (user == null)
-                return BadRequest(new { message = "Username or password is incorrect" });
+                if (user == null)
+                    return BadRequest(new { message = "Username or password is incorrect" });
 
+                var tokenString = CreateJwtTokenString(user);
+
+                // return basic user info and authentication token
+                return Ok(new
+                {
+                    Id = user.Id,
+                    Username = user.UserName,
+                    Token = tokenString
+                });
+            }
+            catch (AppException ex)
+            {
+                return StatusCode((int)ex.StatusCode, ex.Message);
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpPost("register")]
+        public async Task<ActionResult<string>> AddUserAsync([FromBody]RegisterModel model)
+        {
+            try
+            {
+                var user = await _userService.AddUserAsync(model.Username, model.Password);
+                return Ok(user.UserName);
+            }
+            catch (AppException ex)
+            {
+                return StatusCode((int)ex.StatusCode, ex.Message);
+            }
+        }
+
+        private string CreateJwtTokenString(User user)
+        {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
             var tokenDescriptor = new SecurityTokenDescriptor
@@ -60,23 +97,7 @@ namespace Spestqnko.Api.Controllers
             };
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
-            var tokenString = tokenHandler.WriteToken(token);
-
-            // return basic user info and authentication token
-            return Ok(new
-            {
-                Id = user.Id,
-                Username = user.UserName,
-                Token = tokenString
-            });
-        }
-
-        [AllowAnonymous]
-        [HttpPost("register")]
-        public async Task<ActionResult<string>> AddUserAsync([FromBody]RegisterModel model)
-        {
-            var user = await _userService.AddUserAsync(model.Username, model.Password);
-            return Ok(user.UserName);
+            return tokenHandler.WriteToken(token);
         }
     }
 }

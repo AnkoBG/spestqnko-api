@@ -1,4 +1,5 @@
-﻿using Spestqnko.Core.Repositories;
+﻿using Spestqnko.Core.Models;
+using Spestqnko.Core.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +20,7 @@ namespace Spestqnko.Core
         IUserWalletRepository UserWallets { get; }
         IWalletRepository Wallets { get; }
         IRepository<TEntity> GetRepository<TEntity>()
-            where TEntity : class;
+            where TEntity : class, IModel;
         Task<int> CommitAsync();
     }
 }
