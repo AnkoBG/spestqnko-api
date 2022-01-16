@@ -4,9 +4,9 @@ namespace Spestqnko.Api.Configurations
 {
     public static class MigrationsConfiguration
     {
-        public static void ConfigureMigrations(this IApplicationBuilder app)
+        public static IApplicationBuilder ConfigureMigrations(this IApplicationBuilder app)
         {
-            app.EnsureMigrationOfContext<SpestqnkoDbContext>();
+            return app.EnsureMigrationOfContext<SpestqnkoDbContext>();
         }
     }
 }

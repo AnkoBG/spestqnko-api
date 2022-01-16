@@ -12,8 +12,8 @@ using Spestqnko.Data;
 namespace Spestqnko.Data.Migrations
 {
     [DbContext(typeof(SpestqnkoDbContext))]
-    [Migration("20220115020336_Initial")]
-    partial class Initial
+    [Migration("20220116150918_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -280,6 +280,14 @@ namespace Spestqnko.Data.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 
+                    b.Property<byte[]>("PWHash")
+                        .IsRequired()
+                        .HasColumnType("bytea");
+
+                    b.Property<byte[]>("PWSalt")
+                        .IsRequired()
+                        .HasColumnType("bytea");
+
                     b.Property<string>("PasswordHash")
                         .HasColumnType("text");
 
@@ -296,6 +304,7 @@ namespace Spestqnko.Data.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("UserName")
+                        .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 

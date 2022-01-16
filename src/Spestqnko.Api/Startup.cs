@@ -1,8 +1,14 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using Spestqnko.Api.Extensions;
+using Spestqnko.Api.Settings;
 using Spestqnko.Core;
+using Spestqnko.Core.Models;
 using Spestqnko.Core.Services;
 using Spestqnko.Data;
 using Spestqnko.Service;
+using System.Text;
 
 namespace Spestqnko.Api.Configurations
 {
@@ -21,6 +27,47 @@ namespace Spestqnko.Api.Configurations
 
             services.AddControllers();
 
+            var appSettingsSection = Configuration.GetSection("AppSettings");
+            services.Configure<AppSettings>(appSettingsSection);
+
+            // configure jwt authentication
+            var appSettings = appSettingsSection.Get<AppSettings>();
+            var key = Encoding.ASCII.GetBytes(appSettings.Secret);
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(x =>
+            {
+                x.Events = new JwtBearerEvents
+                {
+                    OnTokenValidated = context =>
+                    {
+                        var userService = context.HttpContext.RequestServices.GetRequiredService<IUserService>();
+                        var identName = context?.Principal?.Identity?.Name;
+                        if (identName == null)
+                            context.Fail("Unauthorized");
+
+                        var userId = Guid.Parse(identName);
+                        var user = userService.GetById(userId);
+                        if (user == null)
+                            context.Fail("Unauthorized"); // return unauthorized if user no longer exists
+
+                        return Task.CompletedTask;
+                    }
+                };
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                };
+            });
+
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddTransient<IUserService, UserService>();
 
@@ -34,33 +81,21 @@ namespace Spestqnko.Api.Configurations
 
         public void Configure(IApplicationBuilder app, IHostEnvironment env)
         {
-            app.ConfigureMigrations();
-
-            // Configure the HTTP request pipeline.
-            if (env.IsDevelopment())
-            {
-                app.UseMigrationsEndPoint();
-            }
-            else
-            {
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
-
-            app.UseHttpsRedirection();
-
-            app.UseRouting();
-
-            app.UseAuthentication();
-            app.UseAuthorization();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
-
-            app.UseSwagger();
-            app.UseSwaggerUI(c =>
+            app.ConfigureMigrations()
+                .If(() => env.IsDevelopment(), app => 
+                {
+                    app.UseMigrationsEndPoint();
+                    app.UseExceptionHandler("/error");
+                    app.UseDeveloperExceptionPage();
+                })
+                .Else(app => app.UseHsts())
+                .UseHttpsRedirection()
+                .UseRouting()
+                .UseAuthentication()
+                .UseAuthorization()
+                .UseEndpoints(endpoints => endpoints.MapControllers())
+                .UseSwagger()
+                .UseSwaggerUI(c =>
             {
                 c.RoutePrefix = "";
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Spestqnko.Api V1");

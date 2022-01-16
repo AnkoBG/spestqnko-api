@@ -4,7 +4,7 @@ namespace Spestqnko.Api
 {
     public static class EnsureMigration
     {
-        public static void EnsureMigrationOfContext<T>(this IApplicationBuilder app) where T : DbContext
+        public static IApplicationBuilder EnsureMigrationOfContext<T>(this IApplicationBuilder app) where T : DbContext
         {
             using var serviceScope = app.ApplicationServices.CreateScope();
 
@@ -12,6 +12,8 @@ namespace Spestqnko.Api
 
             if(context?.Database?.GetPendingMigrations().Count() > 0)
                 context?.Database?.Migrate();
+
+            return app;
         }
     }
 }
