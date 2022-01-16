@@ -18,7 +18,7 @@ namespace Spestqnko.Service
             return _unitOfWork.GetRepository<TEntity>().GetAllAsync();
         }
 
-        public Task<TEntity> GetById(Guid id)
+        public TEntity GetById(Guid id)
         {
             return _unitOfWork.GetRepository<TEntity>().GetByIdAsync(id);
         }

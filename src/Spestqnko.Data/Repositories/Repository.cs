@@ -38,9 +38,9 @@ namespace Spestqnko.Data.Repositories
             return await Context.SetIncludeAll<TEntity>().ToListAsync();
         }
 
-        public Task<TEntity> GetByIdAsync(Guid id)
+        public TEntity GetByIdAsync(Guid id)
         {
-            return new Task<TEntity>(() => Context.SetIncludeAll<TEntity>().SingleOrDefault(t => t.Id == id));
+            return Context.SetIncludeAll<TEntity>().SingleOrDefault(t => t.Id == id);
         }
 
         public void Remove(TEntity entity)

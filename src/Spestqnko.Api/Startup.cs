@@ -30,6 +30,9 @@ namespace Spestqnko.Api.Configurations
             var appSettingsSection = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);
 
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddTransient<IUserService, UserService>();
+
             // configure jwt authentication
             var appSettings = appSettingsSection.Get<AppSettings>();
             var key = Encoding.ASCII.GetBytes(appSettings.Secret);
@@ -54,6 +57,8 @@ namespace Spestqnko.Api.Configurations
                         if (user == null)
                             context.Fail("Unauthorized"); // return unauthorized if user no longer exists
 
+                        context.HttpContext.Items["User"] = user;
+
                         return Task.CompletedTask;
                     }
                 };
@@ -67,9 +72,6 @@ namespace Spestqnko.Api.Configurations
                     ValidateAudience = false
                 };
             });
-
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddTransient<IUserService, UserService>();
 
             services.AddSwaggerGen(options =>
             {

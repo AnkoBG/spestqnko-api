@@ -37,6 +37,7 @@ namespace Spestqnko.Service
 
             return user;
         }
+
         public async Task<User>? Authenticate(string username, string password)
         {
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))

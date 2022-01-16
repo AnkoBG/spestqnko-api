@@ -17,17 +17,15 @@ namespace Spestqnko.Api.Controllers
     [Authorize]
     [Route("api/user")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class UserController : BaseController
     {
-        private readonly ILogger<UserController> _logger;
-
         private readonly IUserService _userService;
 
         private readonly AppSettings _appSettings;
 
         public UserController(ILogger<UserController> logger, IUserService userService, IOptions<AppSettings> appSettings)
+            : base(logger)
         {
-            _logger = logger;
             _userService = userService;
             _appSettings = appSettings.Value;
         }
@@ -38,6 +36,14 @@ namespace Spestqnko.Api.Controllers
             var users = await _userService.GetAll();
 
             return Ok(users.Select(u => u.UserName));
+        }
+
+        [HttpGet("current")]
+        public async Task<ActionResult<string>> GetCurrent()
+        {
+            var user = User;
+
+            return Ok(user);
         }
 
         [AllowAnonymous]
@@ -90,7 +96,7 @@ namespace Spestqnko.Api.Controllers
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.Name, user.Id.ToString())
+                    new Claim(ClaimTypes.Name, user.Id.ToString()),
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
