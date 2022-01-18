@@ -21,6 +21,6 @@ namespace Spestqnko.Core.Models
 
         public float MonthlyIncome { get; set;}
 
-        public List<UserWalletCategory> UserWalletCategories { get; set; }
+        public List<UserWalletCategory> UserWalletCategories { get; set; } = new List<UserWalletCategory>();
     }
 }

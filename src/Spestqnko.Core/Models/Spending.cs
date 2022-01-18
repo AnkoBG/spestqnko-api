@@ -22,5 +22,7 @@ namespace Spestqnko.Core.Models
         public DateTime Date { get; set;}
 
         public float Amount { get; set; }
+
+        public string Description { get; set; } = string.Empty;
     }
 }

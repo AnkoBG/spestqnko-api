@@ -18,8 +18,8 @@ namespace Spestqnko.Core.Models
         [ForeignKey("WalletId")]
         public Wallet Wallet { get; set; }
 
-        public List<Spending> Spendings { get; set; }
+        public List<Spending> Spendings { get; set; } = new List<Spending>();
 
-        public List<UserWalletCategory> UserWalletCategories { get; set; }
+        public List<UserWalletCategory> UserWalletCategories { get; set; } = new List<UserWalletCategory>();
     }
 }
