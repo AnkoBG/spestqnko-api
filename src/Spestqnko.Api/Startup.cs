@@ -23,7 +23,15 @@ namespace Spestqnko.Api.Configurations
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.ConfigureDbContexts(Configuration.GetConnectionString("DefaultConnection"));
+            var connectionString = Configuration.GetConnectionString("DefaultConnection");
+            if (connectionString != null)
+            {
+                services.ConfigureDbContexts(connectionString);
+            }
+            else
+            {
+                throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+            }
 
             services.AddControllers();
 
@@ -35,43 +43,68 @@ namespace Spestqnko.Api.Configurations
 
             // configure jwt authentication
             var appSettings = appSettingsSection.Get<AppSettings>();
-            var key = Encoding.ASCII.GetBytes(appSettings.Secret);
-            services.AddAuthentication(x =>
+            if (appSettings?.Secret != null)
             {
-                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(x =>
-            {
-                x.Events = new JwtBearerEvents
+                var key = Encoding.ASCII.GetBytes(appSettings.Secret);
+                services.AddAuthentication(x =>
                 {
-                    OnTokenValidated = context =>
+                    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(x =>
+                {
+                    x.Events = new JwtBearerEvents
                     {
-                        var userService = context.HttpContext.RequestServices.GetRequiredService<IUserService>();
-                        var identName = context?.Principal?.Identity?.Name;
-                        if (identName == null)
-                            context.Fail("Unauthorized");
+                        OnTokenValidated = context =>
+                        {
+                            if (context == null || context.HttpContext == null)
+                            {
+                                return Task.CompletedTask;
+                            }
 
-                        var userId = Guid.Parse(identName);
-                        var user = userService.GetById(userId);
-                        if (user == null)
-                            context.Fail("Unauthorized"); // return unauthorized if user no longer exists
+                            var userService = context.HttpContext.RequestServices.GetRequiredService<IUserService>();
+                            var identName = context.Principal?.Identity?.Name;
+                            if (string.IsNullOrEmpty(identName))
+                            {
+                                context.Fail("Unauthorized");
+                                return Task.CompletedTask;
+                            }
 
-                        context.HttpContext.Items["User"] = user;
+                            if (Guid.TryParse(identName, out var userId))
+                            {
+                                var user = userService.GetById(userId);
+                                if (user == null)
+                                {
+                                    context.Fail("Unauthorized"); // return unauthorized if user no longer exists
+                                }
+                                else if (context.HttpContext.Items != null)
+                                {
+                                    context.HttpContext.Items["User"] = user;
+                                }
+                            }
+                            else
+                            {
+                                context.Fail("Invalid user ID format");
+                            }
 
-                        return Task.CompletedTask;
-                    }
-                };
-                x.RequireHttpsMetadata = false;
-                x.SaveToken = true;
-                x.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = false,
-                    ValidateAudience = false
-                };
-            });
+                            return Task.CompletedTask;
+                        }
+                    };
+                    x.RequireHttpsMetadata = false;
+                    x.SaveToken = true;
+                    x.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(key),
+                        ValidateIssuer = false,
+                        ValidateAudience = false
+                    };
+                });
+            }
+            else
+            {
+                throw new InvalidOperationException("AppSettings:Secret configuration is missing");
+            }
 
             services.AddSwaggerGen(options =>
             {

@@ -39,7 +39,7 @@ namespace Spestqnko.Api.Controllers
         }
 
         [HttpGet("current")]
-        public async Task<ActionResult<string>> GetCurrent()
+        public ActionResult<string> GetCurrent()
         {
             var user = User;
 
@@ -52,18 +52,19 @@ namespace Spestqnko.Api.Controllers
         {
             try
             {
-                var user = await _userService.Authenticate(model.Username, model.Password);
+                var userResult = await _userService.Authenticate(model.Username, model.Password);
 
-                if (user == null)
+                // Check if authentication returned a user
+                if (userResult == null)
                     return BadRequest(new { message = "Username or password is incorrect" });
 
-                var tokenString = CreateJwtTokenString(user);
+                var tokenString = CreateJwtTokenString(userResult);
 
                 // return basic user info and authentication token
                 return Ok(new
                 {
-                    Id = user.Id,
-                    Username = user.UserName,
+                    Id = userResult.Id,
+                    Username = userResult.UserName,
                     Token = tokenString
                 });
             }

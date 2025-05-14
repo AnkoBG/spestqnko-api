@@ -14,15 +14,15 @@ namespace Spestqnko.Data
     {
         private readonly SpestqnkoDbContext _context;
 
-        private CategoryRepository _categories;
-        private NotificationRepository _notifications;
-        private RoleRepository _roles;
-        private ExpenseNotificationTresholdRepository _expenseNotificationTresholds;
-        private ExpenseRepository _expenses;
-        private UserRepository _users;
-        private UserWalletCategoryRepository _userWalletCategories;
-        private UserWalletRepository _userWallets;
-        private WalletRepository _wallets;
+        private CategoryRepository? _categories;
+        private NotificationRepository? _notifications;
+        private RoleRepository? _roles;
+        private ExpenseNotificationTresholdRepository? _expenseNotificationTresholds;
+        private ExpenseRepository? _expenses;
+        private UserRepository? _users;
+        private UserWalletCategoryRepository? _userWalletCategories;
+        private UserWalletRepository? _userWallets;
+        private WalletRepository? _wallets;
 
         public UnitOfWork(SpestqnkoDbContext context)
         {

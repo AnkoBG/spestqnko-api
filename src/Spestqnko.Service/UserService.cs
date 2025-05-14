@@ -50,7 +50,7 @@ namespace Spestqnko.Service
                 throw new AppException("Invalid credentials");
 
             // authentication successful
-            return user;
+            return await Task.FromResult(user);
         }
 
         private static void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)

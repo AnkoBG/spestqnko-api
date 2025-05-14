@@ -6,13 +6,13 @@ namespace Spestqnko.Data
 {
     public class SpestqnkoDbContext : IdentityDbContext<User, Role, Guid>
     {
-        public DbSet<Expense> Expenses { get; set; }
-        public DbSet<Category> Categories { get; set; }
-        public DbSet<Wallet> Wallets { get; set; }
-        public DbSet<UserWallet> UserWallets { get; set; }
-        public DbSet<UserWalletCategory> UserWalletCategories { get; set; }
-        public DbSet<ExpenseNotificationTreshold> ExpenseNotificationTresholds { get; set; }
-        public DbSet<Notification> Notifications { get; set; }
+        public required DbSet<Expense> Expenses { get; set; }
+        public required DbSet<Category> Categories { get; set; }
+        public required DbSet<Wallet> Wallets { get; set; }
+        public required DbSet<UserWallet> UserWallets { get; set; }
+        public required DbSet<UserWalletCategory> UserWalletCategories { get; set; }
+        public required DbSet<ExpenseNotificationTreshold> ExpenseNotificationTresholds { get; set; }
+        public required DbSet<Notification> Notifications { get; set; }
 
         public SpestqnkoDbContext(DbContextOptions<SpestqnkoDbContext> options)
             : base(options)

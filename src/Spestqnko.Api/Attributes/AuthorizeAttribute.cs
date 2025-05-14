@@ -9,8 +9,11 @@ namespace Spestqnko.Api.Attributes
     {
         public void OnAuthorization(AuthorizationFilterContext context)
         {
-            var user = (User)context.HttpContext.Items["User"];
-            if (user == null)
+            if (context.HttpContext.Items.TryGetValue("User", out var userObj) && userObj is User user)
+            {
+                // User is authenticated, allow the request to proceed
+            }
+            else
             {
                 // not logged in
                 context.Result = new JsonResult(new { message = "Unauthorized" }) { StatusCode = StatusCodes.Status401Unauthorized };

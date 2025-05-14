@@ -54,6 +54,11 @@
 
     public class Else<T> where T : class
     {
+        public Else(T obj)
+        {
+            Object = obj;
+        }
+
         public T Object { get; set; }
 
         public static implicit operator T(Else<T> ifObj) => ifObj.Object;

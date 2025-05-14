@@ -12,7 +12,7 @@ namespace Spestqnko.Core.Models
         public Guid UserWalletCategoryId { get; set; }
 
         [ForeignKey("UserWalletCategoryId")]
-        public UserWalletCategory UserWalletCategory { get; set; }
+        public required UserWalletCategory UserWalletCategory { get; set; }
 
         [Range(0, 100)]
         public int Percent { get; set; }

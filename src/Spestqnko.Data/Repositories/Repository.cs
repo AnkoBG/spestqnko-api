@@ -38,7 +38,7 @@ namespace Spestqnko.Data.Repositories
             return await Context.SetIncludeAll<TEntity>().ToListAsync();
         }
 
-        public TEntity GetByIdAsync(Guid id)
+        public TEntity? GetByIdAsync(Guid id)
         {
             return Context.SetIncludeAll<TEntity>().SingleOrDefault(t => t.Id == id);
         }
@@ -53,7 +53,7 @@ namespace Spestqnko.Data.Repositories
             Context.Set<TEntity>().RemoveRange(entities);
         }
 
-        public Task<TEntity> SingleOrDefaultAsync(Expression<Func<TEntity, bool>> predicate)
+        public Task<TEntity?> SingleOrDefaultAsync(Expression<Func<TEntity, bool>> predicate)
         {
             return Context.Set<TEntity>().SingleOrDefaultAsync(predicate);
         }
@@ -65,8 +65,12 @@ namespace Spestqnko.Data.Repositories
         {
             var query = context.Set<TEntity>().AsQueryable();
 
-            foreach (var property in context.Model.FindEntityType(typeof(TEntity)).GetNavigations())
-                query = query.Include(property.Name);
+            var entityType = context.Model.FindEntityType(typeof(TEntity));
+            if (entityType != null)
+            {
+                foreach (var property in entityType.GetNavigations())
+                    query = query.Include(property.Name);
+            }
 
             return query;
         }
