@@ -1,26 +1,29 @@
-﻿using Spestqnko.Core;
+﻿using Microsoft.EntityFrameworkCore;
 using Spestqnko.Core.Models;
+using Spestqnko.Core.Repositories;
 using Spestqnko.Core.Services;
 
 namespace Spestqnko.Service
 {
     public abstract class BaseModelService<TEntity> : IService<TEntity> where TEntity : class, IModel
     {
-        protected readonly IUnitOfWork _unitOfWork;
+        protected readonly IRepository<TEntity> _repository;
+        protected readonly DbContext _dbContext;
 
-        public BaseModelService(IUnitOfWork unitOfWork)
+        public BaseModelService(IRepository<TEntity> repository, DbContext dbContext)
         {
-            _unitOfWork = unitOfWork;
+            _repository = repository;
+            _dbContext = dbContext;
         }
 
         public Task<IEnumerable<TEntity>> GetAll()
         {
-            return _unitOfWork.GetRepository<TEntity>().GetAllAsync();
+            return _repository.GetAllAsync();
         }
 
-        public TEntity GetById(Guid id)
+        public TEntity? GetById(Guid id)
         {
-            return _unitOfWork.GetRepository<TEntity>().GetByIdAsync(id);
+            return _repository.GetById(id);
         }
     }
 }

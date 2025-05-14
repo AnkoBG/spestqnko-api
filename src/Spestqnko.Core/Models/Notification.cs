@@ -12,7 +12,7 @@ namespace Spestqnko.Core.Models
         public Guid UserId { get; set;}
 
         [ForeignKey("UserId")]
-        public User User { get; set; }
+        public required User User { get; set; }
 
         public string Text { get; set;} = string.Empty;
 

@@ -9,7 +9,7 @@ namespace Spestqnko.Core.Services
 {
     public interface IService<TEntity> where TEntity : class
     {
-        TEntity GetById(Guid id);
+        TEntity? GetById(Guid id);
         Task<IEnumerable<TEntity>> GetAll();
     }
 }

@@ -9,7 +9,7 @@ namespace Spestqnko.Core.Services
 {
     public interface IUserService : IService<User>
     {
-        public Task<User>? Authenticate(string username, string password);
+        public Task<User> Authenticate(string username, string password);
         public Task<User> AddUserAsync(string username, string password);
     }
 }

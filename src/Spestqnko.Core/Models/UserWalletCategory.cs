@@ -12,12 +12,12 @@ namespace Spestqnko.Core.Models
         public Guid UserWalletId { get; set; }
 
         [ForeignKey("UserWalletId")]
-        public UserWallet UserWallet { get; set; }
+        public required UserWallet UserWallet { get; set; }
 
         public Guid CategoryId { get; set; }
 
         [ForeignKey("CategoryId")]
-        public Category Category { get; set; }
+        public required Category Category { get; set; }
 
         public float MaxSpendingAmount { get; set;}
 

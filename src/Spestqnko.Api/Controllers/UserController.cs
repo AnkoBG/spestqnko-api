@@ -6,8 +6,6 @@ using Spestqnko.Api.Models.User;
 using Spestqnko.Api.Settings;
 using Spestqnko.Core.Models;
 using Spestqnko.Core.Services;
-using Spestqnko.Service.Exceptions;
-using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -50,43 +48,28 @@ namespace Spestqnko.Api.Controllers
         [HttpPost("authenticate")]
         public async Task<IActionResult> Authenticate([FromBody]AuthenticateModel model)
         {
-            try
+            var userResult = await _userService.Authenticate(model.Username, model.Password);
+
+            // Check if authentication returned a user (this should not happen with the current implementation 
+            // as Authenticate will throw AppException for invalid credentials)
+            if (userResult == null)
+                return BadRequest(new { message = "Username or password is incorrect" });
+
+            // return basic user info and authentication token
+            return Ok(new
             {
-                var userResult = await _userService.Authenticate(model.Username, model.Password);
-
-                // Check if authentication returned a user
-                if (userResult == null)
-                    return BadRequest(new { message = "Username or password is incorrect" });
-
-                var tokenString = CreateJwtTokenString(userResult);
-
-                // return basic user info and authentication token
-                return Ok(new
-                {
-                    Id = userResult.Id,
-                    Username = userResult.UserName,
-                    Token = tokenString
-                });
-            }
-            catch (AppException ex)
-            {
-                return StatusCode((int)ex.StatusCode, ex.Message);
-            }
+                Id = userResult.Id,
+                Username = userResult.UserName,
+                Token = CreateJwtTokenString(userResult)
+            });
         }
 
         [AllowAnonymous]
         [HttpPost("register")]
         public async Task<ActionResult<string>> AddUserAsync([FromBody]RegisterModel model)
         {
-            try
-            {
-                var user = await _userService.AddUserAsync(model.Username, model.Password);
-                return Ok(user.UserName);
-            }
-            catch (AppException ex)
-            {
-                return StatusCode((int)ex.StatusCode, ex.Message);
-            }
+            var user = await _userService.AddUserAsync(model.Username, model.Password);
+            return Ok(user.UserName);
         }
 
         private string CreateJwtTokenString(User user)

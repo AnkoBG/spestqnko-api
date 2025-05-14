@@ -12,12 +12,12 @@ namespace Spestqnko.Core.Models
         public Guid UserId { get; set; }
 
         [ForeignKey("UserId")]
-        public User User { get; set; }
+        public required User User { get; set; }
 
         public Guid CategoryId { get; set; }
 
         [ForeignKey("CategoryId")]
-        public Category Category { get; set; }
+        public required Category Category { get; set; }
 
         public DateTime Date { get; set;}
 

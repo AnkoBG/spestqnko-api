@@ -1,16 +1,17 @@
-﻿using Spestqnko.Core;
+﻿using Microsoft.EntityFrameworkCore;
 using Spestqnko.Core.Models;
+using Spestqnko.Core.Repositories;
 using Spestqnko.Core.Services;
 using Spestqnko.Service.Exceptions;
 using System.Net;
-using System.Text;
+using System.Security.Cryptography;
 
 namespace Spestqnko.Service
 {
     public class UserService : BaseModelService<User>, IUserService
     {
-        public UserService(IUnitOfWork unitOfWork)
-            : base(unitOfWork)
+        public UserService(IUserRepository userRepository, DbContext dbContext)
+            : base(userRepository, dbContext)
         {
         }
 
@@ -19,7 +20,7 @@ namespace Spestqnko.Service
             if (string.IsNullOrWhiteSpace(password))
                 throw new AppException(HttpStatusCode.BadRequest, "Password is required");
 
-            if (_unitOfWork.Users.Find(x => x.UserName == username).Any())
+            if (_repository.Find(x => x.UserName == username).Any())
                 throw new AppException(HttpStatusCode.BadRequest, $"Username {username} is already taken");
 
             byte[] passwordHash, passwordSalt;
@@ -32,18 +33,18 @@ namespace Spestqnko.Service
                 PWSalt = passwordSalt
             };
 
-            await _unitOfWork.Users.AddAsync(user);
-            await _unitOfWork.CommitAsync();
+            await _repository.AddAsync(user);
+            await _dbContext.SaveChangesAsync();
 
             return user;
         }
 
-        public async Task<User>? Authenticate(string username, string password)
+        public async Task<User> Authenticate(string username, string password)
         {
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
                 throw new AppException(HttpStatusCode.BadRequest, "Missing Password or Username.");
 
-            var user = _unitOfWork.Users.Find(x => x.UserName == username).SingleOrDefault();
+            var user = _repository.Find(x => x.UserName == username).SingleOrDefault();
 
             // check if username exists
             if (user == null || !VerifyPasswordHash(password, user))
@@ -58,7 +59,7 @@ namespace Spestqnko.Service
             if (password == null) throw new ArgumentNullException("password");
             if (string.IsNullOrWhiteSpace(password)) throw new ArgumentException("Value cannot be empty or whitespace only string.", "password");
 
-            using (var hmac = new System.Security.Cryptography.HMACSHA512())
+            using (var hmac = new HMACSHA512())
             {
                 passwordSalt = hmac.Key;
                 passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
@@ -76,7 +77,7 @@ namespace Spestqnko.Service
             if (user.PWSalt.Length != 128)
                 throw new ArgumentException("Invalid length of password salt (128 bytes expected).", "user.PWSalt");
 
-            using (var hmac = new System.Security.Cryptography.HMACSHA512(user.PWSalt))
+            using (var hmac = new HMACSHA512(user.PWSalt))
             {
                 var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
                 for (int i = 0; i < computedHash.Length; i++)
@@ -87,6 +88,5 @@ namespace Spestqnko.Service
 
             return true;
         }
-
     }
 }

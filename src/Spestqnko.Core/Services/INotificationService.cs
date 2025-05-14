@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Spestqnko.Core.Services
 {
-    public interface INotificationRepository : IRepository<Notification>
+    public interface INotificationService : IService<Notification>
     {
     }
 }

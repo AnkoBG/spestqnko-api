@@ -1,12 +1,15 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Spestqnko.Api.Attributes;
 using Spestqnko.Api.Extensions;
 using Spestqnko.Api.Settings;
-using Spestqnko.Core;
 using Spestqnko.Core.Models;
+using Spestqnko.Core.Repositories;
 using Spestqnko.Core.Services;
 using Spestqnko.Data;
+using Spestqnko.Data.Repositories;
 using Spestqnko.Service;
 using System.Text;
 
@@ -33,12 +36,29 @@ namespace Spestqnko.Api.Configurations
                 throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
             }
 
-            services.AddControllers();
+            // Add MVC controllers with filters
+            services.AddControllers(options =>
+            {
+                options.Filters.Add<AppExceptionFilterAttribute>();
+            });
 
             var appSettingsSection = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);
 
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            // Register DbContext for repository usage
+            services.AddScoped<DbContext>(provider => provider.GetRequiredService<SpestqnkoDbContext>());
+
+            // Register repositories
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<INotificationRepository, NotificationRepository>();
+            services.AddScoped<IRoleRepository, RoleRepository>();
+            services.AddScoped<IExpenseNotificationTresholdRepository, ExpenseNotificationTresholdRepository>();
+            services.AddScoped<IExpenseRepository, ExpenseRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IUserWalletCategoryRepository, UserWalletCategoryRepository>();
+            services.AddScoped<IUserWalletRepository, UserWalletRepository>();
+            services.AddScoped<IWalletRepository, WalletRepository>();
+            
             services.AddTransient<IUserService, UserService>();
 
             // configure jwt authentication
@@ -131,10 +151,10 @@ namespace Spestqnko.Api.Configurations
                 .UseEndpoints(endpoints => endpoints.MapControllers())
                 .UseSwagger()
                 .UseSwaggerUI(c =>
-            {
-                c.RoutePrefix = "";
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Spestqnko.Api V1");
-            });
+                {
+                    c.RoutePrefix = "";
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Spestqnko.Api V1");
+                });
         }
     }
 }
