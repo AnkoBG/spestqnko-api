@@ -20,7 +20,7 @@ namespace Spestqnko.Data.Repositories
         public ICategoryRepository Categories => _serviceProvider.GetRequiredService<ICategoryRepository>();
         public INotificationRepository Notifications => _serviceProvider.GetRequiredService<INotificationRepository>();
         public IRoleRepository Roles => _serviceProvider.GetRequiredService<IRoleRepository>();
-        public IExpenseNotificationTresholdRepository ExpenseNotificationTresholds => _serviceProvider.GetRequiredService<IExpenseNotificationTresholdRepository>();
+        public IExpenseTresholdRepository ExpenseTresholds => _serviceProvider.GetRequiredService<IExpenseTresholdRepository>();
         public IExpenseRepository Expenses => _serviceProvider.GetRequiredService<IExpenseRepository>();
         public IUserRepository Users => _serviceProvider.GetRequiredService<IUserRepository>();
         public IUserWalletCategoryRepository UserWalletCategories => _serviceProvider.GetRequiredService<IUserWalletCategoryRepository>();

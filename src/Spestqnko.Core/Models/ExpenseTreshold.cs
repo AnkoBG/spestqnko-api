@@ -1,12 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Spestqnko.Core.Models
 {
-    [Table("ExpenseNotificationTresholds")]
-    public class ExpenseNotificationTreshold : IModel
+    [Table("ExpenseTresholds")]
+    public class ExpenseTreshold : IModel
     {
-        [Key]
         public Guid Id { get; set; }
 
         public Guid UserWalletCategoryId { get; set; }
@@ -17,4 +16,4 @@ namespace Spestqnko.Core.Models
         [Range(0, 100)]
         public int Percent { get; set; }
     }
-}
+} 

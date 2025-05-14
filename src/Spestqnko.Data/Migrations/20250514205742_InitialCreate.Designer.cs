@@ -12,7 +12,7 @@ using Spestqnko.Data;
 namespace Spestqnko.Data.Migrations
 {
     [DbContext(typeof(SpestqnkoDbContext))]
-    [Migration("20250514155433_InitialCreate")]
+    [Migration("20250514205742_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -178,10 +178,10 @@ namespace Spestqnko.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Expenses", (string)null);
+                    b.ToTable("Expenses");
                 });
 
-            modelBuilder.Entity("Spestqnko.Core.Models.ExpenseNotificationTreshold", b =>
+            modelBuilder.Entity("Spestqnko.Core.Models.ExpenseTreshold", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -197,7 +197,7 @@ namespace Spestqnko.Data.Migrations
 
                     b.HasIndex("UserWalletCategoryId");
 
-                    b.ToTable("ExpenseNotificationTresholds", (string)null);
+                    b.ToTable("ExpenseTresholds");
                 });
 
             modelBuilder.Entity("Spestqnko.Core.Models.Notification", b =>
@@ -468,10 +468,10 @@ namespace Spestqnko.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Spestqnko.Core.Models.ExpenseNotificationTreshold", b =>
+            modelBuilder.Entity("Spestqnko.Core.Models.ExpenseTreshold", b =>
                 {
                     b.HasOne("Spestqnko.Core.Models.UserWalletCategory", "UserWalletCategory")
-                        .WithMany("ExpenseNotificationTresholds")
+                        .WithMany("ExpenseTresholds")
                         .HasForeignKey("UserWalletCategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -551,7 +551,7 @@ namespace Spestqnko.Data.Migrations
 
             modelBuilder.Entity("Spestqnko.Core.Models.UserWalletCategory", b =>
                 {
-                    b.Navigation("ExpenseNotificationTresholds");
+                    b.Navigation("ExpenseTresholds");
                 });
 
             modelBuilder.Entity("Spestqnko.Core.Models.Wallet", b =>

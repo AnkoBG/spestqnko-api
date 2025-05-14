@@ -10,7 +10,7 @@ namespace Spestqnko.Core.Repositories
         ICategoryRepository Categories { get; }
         INotificationRepository Notifications { get; }
         IRoleRepository Roles { get; }
-        IExpenseNotificationTresholdRepository ExpenseNotificationTresholds { get; }
+        IExpenseTresholdRepository ExpenseTresholds { get; }
         IExpenseRepository Expenses { get; }
         IUserRepository Users { get; }
         IUserWalletCategoryRepository UserWalletCategories { get; }

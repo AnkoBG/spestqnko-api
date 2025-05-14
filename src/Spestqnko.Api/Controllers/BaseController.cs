@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Security.Authentication;
 using Spestqnko.Core.Models;
 
 namespace Spestqnko.Api.Controllers
@@ -7,7 +8,8 @@ namespace Spestqnko.Api.Controllers
     {
         protected readonly ILogger _logger;
 
-        protected new User? User => HttpContext.Items["User"] as User;
+        protected new User User => HttpContext.Items["User"] as User ?? 
+            throw new AuthenticationException("User is not authenticated or not found in the current context");
 
         public BaseController(ILogger logger)
         {

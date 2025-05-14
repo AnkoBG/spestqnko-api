@@ -6,7 +6,6 @@ namespace Spestqnko.Core.Models
     [Table("Notifications")]
     public class Notification : IModel
     {
-        [Key]
         public Guid Id { get; set; }
 
         public Guid UserId { get; set;}

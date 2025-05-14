@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Spestqnko.Core.Models;
 using Spestqnko.Core.Repositories;
 using System;
@@ -10,10 +10,10 @@ using System.Threading.Tasks;
 
 namespace Spestqnko.Data.Repositories
 {
-    public class ExpenseNotificationTresholdRepository : Repository<ExpenseNotificationTreshold>, IExpenseNotificationTresholdRepository
+    public class ExpenseTresholdRepository : Repository<ExpenseTreshold>, IExpenseTresholdRepository
     {
-        public ExpenseNotificationTresholdRepository(DbContext context)
+        public ExpenseTresholdRepository(DbContext context)
             : base(context)
         { }
     }
-}
+} 

@@ -6,7 +6,6 @@ namespace Spestqnko.Core.Models
     [Table("UserWalletCategories")]
     public class UserWalletCategory : IModel
     {
-        [Key]
         public Guid Id { get; set; }
 
         public Guid UserWalletId { get; set; }
@@ -21,6 +20,6 @@ namespace Spestqnko.Core.Models
 
         public float MaxSpendingAmount { get; set;}
 
-        public List<ExpenseNotificationTreshold> ExpenseNotificationTresholds { get; set; } = new List<ExpenseNotificationTreshold>();
+        public List<ExpenseTreshold> ExpenseTresholds { get; set; } = new List<ExpenseTreshold>();
     }
 }

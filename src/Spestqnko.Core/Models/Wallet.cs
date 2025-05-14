@@ -6,7 +6,6 @@ namespace Spestqnko.Core.Models
     [Table("Wallets")]
     public class Wallet : IModel
     {
-        [Key]
         public Guid Id { get; set; }
 
         public string Name { get; set;} = string.Empty;

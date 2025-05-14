@@ -1,4 +1,4 @@
-﻿using Spestqnko.Core.Models;
+using Spestqnko.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Spestqnko.Core.Repositories
 {
-    public interface IExpenseNotificationTresholdRepository : IRepository<ExpenseNotificationTreshold>
+    public interface IExpenseTresholdRepository : IRepository<ExpenseTreshold>
     {
     }
-}
+} 

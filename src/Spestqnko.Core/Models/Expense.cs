@@ -6,7 +6,6 @@ namespace Spestqnko.Core.Models
     [Table("Expenses")]
     public class Expense : IModel
     {
-        [Key]
         public Guid Id { get; set; }
 
         public Guid UserId { get; set; }

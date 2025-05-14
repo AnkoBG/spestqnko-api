@@ -290,7 +290,7 @@ namespace Spestqnko.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ExpenseNotificationTresholds",
+                name: "ExpenseTresholds",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -299,9 +299,9 @@ namespace Spestqnko.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ExpenseNotificationTresholds", x => x.Id);
+                    table.PrimaryKey("PK_ExpenseTresholds", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ExpenseNotificationTresholds_UserWalletCategories_UserWalle~",
+                        name: "FK_ExpenseTresholds_UserWalletCategories_UserWalletCategoryId",
                         column: x => x.UserWalletCategoryId,
                         principalTable: "UserWalletCategories",
                         principalColumn: "Id",
@@ -351,11 +351,6 @@ namespace Spestqnko.Data.Migrations
                 column: "WalletId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ExpenseNotificationTresholds_UserWalletCategoryId",
-                table: "ExpenseNotificationTresholds",
-                column: "UserWalletCategoryId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Expenses_CategoryId",
                 table: "Expenses",
                 column: "CategoryId");
@@ -364,6 +359,11 @@ namespace Spestqnko.Data.Migrations
                 name: "IX_Expenses_UserId",
                 table: "Expenses",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ExpenseTresholds_UserWalletCategoryId",
+                table: "ExpenseTresholds",
+                column: "UserWalletCategoryId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Notifications_UserId",
@@ -409,10 +409,10 @@ namespace Spestqnko.Data.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "ExpenseNotificationTresholds");
+                name: "Expenses");
 
             migrationBuilder.DropTable(
-                name: "Expenses");
+                name: "ExpenseTresholds");
 
             migrationBuilder.DropTable(
                 name: "Notifications");

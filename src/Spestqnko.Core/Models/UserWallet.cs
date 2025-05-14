@@ -6,7 +6,6 @@ namespace Spestqnko.Core.Models
     [Table("UserWallets")]
     public class UserWallet : IModel
     {
-        [Key]
         public Guid Id { get; set; }
 
         public Guid UserId { get; set; }

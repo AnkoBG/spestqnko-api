@@ -52,7 +52,7 @@ namespace Spestqnko.Api.Configurations
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<INotificationRepository, NotificationRepository>();
             services.AddScoped<IRoleRepository, RoleRepository>();
-            services.AddScoped<IExpenseNotificationTresholdRepository, ExpenseNotificationTresholdRepository>();
+            services.AddScoped<IExpenseTresholdRepository, ExpenseTresholdRepository>();
             services.AddScoped<IExpenseRepository, ExpenseRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUserWalletCategoryRepository, UserWalletCategoryRepository>();
@@ -66,7 +66,7 @@ namespace Spestqnko.Api.Configurations
             services.AddScoped<IRepository<Expense>, Repository<Expense>>();
             services.AddScoped<IRepository<UserWallet>, Repository<UserWallet>>();
             services.AddScoped<IRepository<UserWalletCategory>, Repository<UserWalletCategory>>();
-            services.AddScoped<IRepository<ExpenseNotificationTreshold>, Repository<ExpenseNotificationTreshold>>();
+            services.AddScoped<IRepository<ExpenseTreshold>, Repository<ExpenseTreshold>>();
             services.AddScoped<IRepository<Notification>, Repository<Notification>>();
             services.AddScoped<IRepository<Role>, Repository<Role>>();
 

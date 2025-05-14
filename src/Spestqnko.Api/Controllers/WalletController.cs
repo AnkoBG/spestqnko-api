@@ -95,11 +95,6 @@ namespace Spestqnko.Api.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<Wallet>> CreateWallet([FromBody] CreateWalletDTO dto)
         {
-            if (User == null)
-            {
-                throw new AggregateAppException(HttpStatusCode.Unauthorized, "User authentication required");
-            }
-
             var wallet = await _walletService.CreateWalletAsync(dto.Name, User.Id, dto.MonthlyIncome);
             
             return CreatedAtAction(

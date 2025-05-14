@@ -50,14 +50,12 @@ namespace Spestqnko.Service
             // Create the wallet
             var wallet = new Wallet
             {
-                Id = Guid.NewGuid(),
                 Name = walletName
             };
 
             // Create the user-wallet association
             var userWallet = new UserWallet
             {
-                Id = Guid.NewGuid(),
                 UserId = userId,
                 User = user,
                 WalletId = wallet.Id,

@@ -6,7 +6,6 @@ namespace Spestqnko.Core.Models
     [Table("Categories")]
     public class Category : IModel
     {
-        [Key]
         public Guid Id { get; set; }
 
         public string Name { get; set;} = string.Empty;
