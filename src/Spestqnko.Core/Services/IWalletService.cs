@@ -11,8 +11,8 @@ namespace Spestqnko.Core.Services
         /// </summary>
         /// <param name="walletName">The name of the wallet to create</param>
         /// <param name="userId">The ID of the user who will own the wallet</param>
-        /// <param name="monthlyIncome">The monthly income for this user-wallet association</param>
+        /// <param name="allocatedIncome">The allocated income for this user-wallet association</param>
         /// <returns>The newly created wallet</returns>
-        Task<Wallet> CreateWalletAsync(string walletName, Guid userId, float monthlyIncome);
+        Task<Wallet> CreateWalletAsync(string walletName, Guid userId, float allocatedIncome);
     }
 }

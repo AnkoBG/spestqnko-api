@@ -26,6 +26,7 @@ namespace Spestqnko.Data.Repositories
         public IUserWalletCategoryRepository UserWalletCategories => _serviceProvider.GetRequiredService<IUserWalletCategoryRepository>();
         public IUserWalletRepository UserWallets => _serviceProvider.GetRequiredService<IUserWalletRepository>();
         public IWalletRepository Wallets => _serviceProvider.GetRequiredService<IWalletRepository>();
+        public ICurrencyRepository Currencies => _serviceProvider.GetRequiredService<ICurrencyRepository>();
 
         public async Task SaveChangesAsync()
         {

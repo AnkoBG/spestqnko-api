@@ -18,7 +18,8 @@ namespace Spestqnko.Core.Models
         [ForeignKey("WalletId")]
         public required Wallet Wallet { get; set; }
 
-        public float MonthlyIncome { get; set;}
+        [Range(0, float.MaxValue)]
+        public float AllocatedIncome { get; set; }
 
         public List<UserWalletCategory> UserWalletCategories { get; set; } = new List<UserWalletCategory>();
     }

@@ -5,6 +5,7 @@ using Spestqnko.Core.Models;
 using Spestqnko.Core.Services;
 using Spestqnko.Service.Exceptions;
 using System.Net;
+using AutoMapper;
 
 namespace Spestqnko.Api.Controllers
 {
@@ -12,21 +13,24 @@ namespace Spestqnko.Api.Controllers
     /// API controller for managing wallets
     /// </summary>
     [Authorize]
-    [Route("api/wallet")]
+    [Route("api/[controller]")]
     [ApiController]
     public class WalletController : BaseController
     {
         private readonly IWalletService _walletService;
+        private readonly IMapper _mapper;
 
         /// <summary>
         /// Initializes a new instance of the WalletController
         /// </summary>
         /// <param name="logger">The logger instance</param>
         /// <param name="walletService">The wallet service for wallet operations</param>
-        public WalletController(ILogger<WalletController> logger, IWalletService walletService)
+        /// <param name="mapper">The AutoMapper instance</param>
+        public WalletController(ILogger<WalletController> logger, IWalletService walletService, IMapper mapper)
             : base(logger)
         {
             _walletService = walletService;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -35,6 +39,19 @@ namespace Spestqnko.Api.Controllers
         /// <remarks>
         /// Sample request:
         ///     GET /api/wallet
+        /// Sample response:
+        ///     [
+        ///       {
+        ///         "name": "Household Budget",
+        ///         "allocatedIncome": 5000,
+        ///         "currency": {
+        ///           "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        ///           "name": "US Dollar",
+        ///           "code": "USD",
+        ///           "symbol": "$"
+        ///         }
+        ///       }
+        ///     ]
         /// </remarks>
         /// <returns>A collection of wallets with their properties and relationships</returns>
         /// <response code="200">Returns the list of wallets</response>
@@ -42,8 +59,11 @@ namespace Spestqnko.Api.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult<IEnumerable<Wallet>>> GetAllWallets()
-            => Ok(await _walletService.GetAllAsync());
+        public async Task<ActionResult<IEnumerable<WalletDTO>>> GetAllWallets()
+        {
+            var wallets = await _walletService.GetAllAsync();
+            return Ok(_mapper.Map<IEnumerable<WalletDTO>>(wallets));
+        }
 
         /// <summary>
         /// Retrieves a specific wallet by its unique identifier
@@ -51,6 +71,17 @@ namespace Spestqnko.Api.Controllers
         /// <remarks>
         /// Sample request:
         ///     GET /api/wallet/3fa85f64-5717-4562-b3fc-2c963f66afa6
+        /// Sample response:
+        ///     {
+        ///       "name": "Household Budget",
+        ///       "allocatedIncome": 5000,
+        ///       "currency": {
+        ///         "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        ///         "name": "US Dollar",
+        ///         "code": "USD",
+        ///         "symbol": "$"
+        ///       }
+        ///     }
         /// </remarks>
         /// <param name="id">The unique identifier of the wallet</param>
         /// <returns>The wallet with the specified ID including its relationships</returns>
@@ -61,16 +92,11 @@ namespace Spestqnko.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult<Wallet>> GetWalletById(Guid id)
+        public async Task<ActionResult<WalletDTO>> GetWalletById(Guid id)
         {
-            var wallet = await _walletService.GetByIdAsync(id);
-            
-            if (wallet == null)
-            {
-                throw new AggregateAppException(HttpStatusCode.NotFound, $"Wallet with ID {id} not found");
-            }
-            
-            return Ok(wallet);
+            var wallet = await _walletService.GetByIdAsync(id) 
+                ?? throw new AggregateAppException(HttpStatusCode.NotFound, $"Wallet with ID {id} not found");
+            return Ok(_mapper.Map<WalletDTO>(wallet));
         }
 
         /// <summary>
@@ -81,7 +107,18 @@ namespace Spestqnko.Api.Controllers
         ///     POST /api/wallet
         ///     {
         ///        "name": "Household Budget",
-        ///        "monthlyIncome": 5000
+        ///        "allocatedIncome": 5000
+        ///     }
+        /// Sample response:
+        ///     {
+        ///       "name": "Household Budget",
+        ///       "allocatedIncome": 5000,
+        ///       "currency": {
+        ///         "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        ///         "name": "US Dollar",
+        ///         "code": "USD",
+        ///         "symbol": "$"
+        ///       }
         ///     }
         /// </remarks>
         /// <param name="dto">The data transfer object containing wallet creation details</param>
@@ -93,14 +130,15 @@ namespace Spestqnko.Api.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult<Wallet>> CreateWallet([FromBody] CreateWalletDTO dto)
+        public async Task<ActionResult<WalletDTO>> CreateWallet([FromBody] CreateWalletDTO dto)
         {
-            var wallet = await _walletService.CreateWalletAsync(dto.Name, User.Id, dto.MonthlyIncome);
+            var wallet = await _walletService.CreateWalletAsync(dto.Name, User.Id, dto.AllocatedIncome);
+            var walletDto = _mapper.Map<WalletDTO>(wallet);
             
             return CreatedAtAction(
                 nameof(GetWalletById), 
                 new { id = wallet.Id }, 
-                wallet);
+                walletDto);
         }
     }
 } 

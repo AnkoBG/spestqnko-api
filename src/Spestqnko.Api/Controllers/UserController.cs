@@ -16,7 +16,7 @@ namespace Spestqnko.Api.Controllers
     /// API controller for managing users and authentication
     /// </summary>
     [Authorize]
-    [Route("api/user")]
+    [Route("api/[controller]")]
     [ApiController]
     public class UserController : BaseController
     {
@@ -29,7 +29,10 @@ namespace Spestqnko.Api.Controllers
         /// <param name="logger">The logger instance</param>
         /// <param name="userService">The user service for user operations</param>
         /// <param name="appSettings">Application settings containing JWT configuration</param>
-        public UserController(ILogger<UserController> logger, IUserService userService, IOptions<AppSettings> appSettings)
+        public UserController(
+            ILogger<UserController> logger, 
+            IUserService userService, 
+            IOptions<AppSettings> appSettings)
             : base(logger)
         {
             _userService = userService;

@@ -13,6 +13,7 @@ namespace Spestqnko.Data
         public required DbSet<UserWalletCategory> UserWalletCategories { get; set; }
         public required DbSet<ExpenseTreshold> ExpenseTresholds { get; set; }
         public required DbSet<Notification> Notifications { get; set; }
+        public required DbSet<Currency> Currencies { get; set; }
 
         public SpestqnkoDbContext(DbContextOptions<SpestqnkoDbContext> options)
             : base(options)

@@ -10,6 +10,11 @@ namespace Spestqnko.Core.Models
 
         public string Name { get; set;} = string.Empty;
 
+        public Guid? CurrencyId { get; set; }
+
+        [ForeignKey("CurrencyId")]
+        public Currency? Currency { get; set; }
+
         public List<UserWallet> UserWallets { get; set; } = new List<UserWallet>();
 
         public List<Category> Categories { get; set; } = new List<Category>();

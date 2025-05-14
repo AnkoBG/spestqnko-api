@@ -16,6 +16,7 @@ namespace Spestqnko.Core.Repositories
         IUserWalletCategoryRepository UserWalletCategories { get; }
         IUserWalletRepository UserWallets { get; }
         IWalletRepository Wallets { get; }
+        ICurrencyRepository Currencies { get; }
         
         Task SaveChangesAsync();
 
