@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Spestqnko.Core.Repositories
 {
-    public interface ISpendingRepository : IRepository<Spending>
+    public interface IExpenseRepository : IRepository<Expense>
     {
     }
 }

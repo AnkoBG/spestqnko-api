@@ -21,6 +21,6 @@ namespace Spestqnko.Core.Models
 
         public float MaxSpendingAmount { get; set;}
 
-        public List<SpendingNotificationTreshold> SpendingNotificationTresholds { get; set; } = new List<SpendingNotificationTreshold>();
+        public List<ExpenseNotificationTreshold> ExpenseNotificationTresholds { get; set; } = new List<ExpenseNotificationTreshold>();
     }
 }

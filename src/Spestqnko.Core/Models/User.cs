@@ -11,6 +11,6 @@ namespace Spestqnko.Core.Models
 
         public List<Notification> Notifications { get; set; } = new List<Notification>();
         public List<UserWallet> UserWallets { get; set; } = new List<UserWallet>();
-        public List<Spending> Spendings { get; set; } = new List<Spending>();
+        public List<Expense> Expenses { get; set; } = new List<Expense>();
     }
 }

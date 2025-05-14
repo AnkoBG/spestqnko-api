@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 
 namespace Spestqnko.Data.Repositories
 {
-    public class SpendingRepository : Repository<Spending>, ISpendingRepository
+    public class ExpenseRepository : Repository<Expense>, IExpenseRepository
     {
-        public SpendingRepository(DbContext context)
+        public ExpenseRepository(DbContext context)
             : base(context)
         { }
     }

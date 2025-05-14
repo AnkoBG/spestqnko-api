@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Spestqnko.Core.Services
 {
-    public interface ISpendingService : IService<Spending>
+    public interface IExpenseService : IService<Expense>
     {
     }
 }

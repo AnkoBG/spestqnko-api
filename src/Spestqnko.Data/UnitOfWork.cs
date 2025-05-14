@@ -17,8 +17,8 @@ namespace Spestqnko.Data
         private CategoryRepository _categories;
         private NotificationRepository _notifications;
         private RoleRepository _roles;
-        private SpendingNotificationTresholdRepository _spendingNotificationTresholds;
-        private SpendingRepository _spendings;
+        private ExpenseNotificationTresholdRepository _expenseNotificationTresholds;
+        private ExpenseRepository _expenses;
         private UserRepository _users;
         private UserWalletCategoryRepository _userWalletCategories;
         private UserWalletRepository _userWallets;
@@ -32,8 +32,8 @@ namespace Spestqnko.Data
         public ICategoryRepository Categories => _categories ??= new CategoryRepository(_context);
         public INotificationRepository Notifications => _notifications ??= new NotificationRepository(_context);
         public IRoleRepository Roles => _roles ??= new RoleRepository(_context);
-        public ISpendingNotificationTresholdRepository SpendingNotificationTresholds => _spendingNotificationTresholds ??= new SpendingNotificationTresholdRepository(_context);
-        public ISpendingRepository Spendings => _spendings ??= new SpendingRepository(_context);
+        public IExpenseNotificationTresholdRepository ExpenseNotificationTresholds => _expenseNotificationTresholds ??= new ExpenseNotificationTresholdRepository(_context);
+        public IExpenseRepository Expenses => _expenses ??= new ExpenseRepository(_context);
         public IUserRepository Users => _users ??= new UserRepository(_context);
         public IUserWalletCategoryRepository UserWalletCategories => _userWalletCategories ??= new UserWalletCategoryRepository(_context);
         public IUserWalletRepository UserWallets => _userWallets ??= new UserWalletRepository(_context);

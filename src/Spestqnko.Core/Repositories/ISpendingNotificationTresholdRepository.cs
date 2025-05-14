@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Spestqnko.Core.Repositories
 {
-    public interface ISpendingNotificationTresholdRepository : IRepository<SpendingNotificationTreshold>
+    public interface IExpenseNotificationTresholdRepository : IRepository<ExpenseNotificationTreshold>
     {
     }
 }

@@ -148,6 +148,56 @@ namespace Spestqnko.Data.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("Spestqnko.Core.Models.Expense", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<float>("Amount")
+                        .HasColumnType("real");
+
+                    b.Property<Guid>("CategoryId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Expenses", (string)null);
+                });
+
+            modelBuilder.Entity("Spestqnko.Core.Models.ExpenseNotificationTreshold", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Percent")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("UserWalletCategoryId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserWalletCategoryId");
+
+                    b.ToTable("ExpenseNotificationTresholds", (string)null);
+                });
+
             modelBuilder.Entity("Spestqnko.Core.Models.Notification", b =>
                 {
                     b.Property<Guid>("Id")
@@ -196,52 +246,6 @@ namespace Spestqnko.Data.Migrations
                         .HasDatabaseName("RoleNameIndex");
 
                     b.ToTable("AspNetRoles", (string)null);
-                });
-
-            modelBuilder.Entity("Spestqnko.Core.Models.Spending", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<float>("Amount")
-                        .HasColumnType("real");
-
-                    b.Property<Guid>("CategoryId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Spendings");
-                });
-
-            modelBuilder.Entity("Spestqnko.Core.Models.SpendingNotificationTreshold", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("Percent")
-                        .HasColumnType("integer");
-
-                    b.Property<Guid>("UserWalletCategoryId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserWalletCategoryId");
-
-                    b.ToTable("SpendingNotificationTresholds");
                 });
 
             modelBuilder.Entity("Spestqnko.Core.Models.User", b =>
@@ -443,27 +447,16 @@ namespace Spestqnko.Data.Migrations
                     b.Navigation("Wallet");
                 });
 
-            modelBuilder.Entity("Spestqnko.Core.Models.Notification", b =>
-                {
-                    b.HasOne("Spestqnko.Core.Models.User", "User")
-                        .WithMany("Notifications")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Spestqnko.Core.Models.Spending", b =>
+            modelBuilder.Entity("Spestqnko.Core.Models.Expense", b =>
                 {
                     b.HasOne("Spestqnko.Core.Models.Category", "Category")
-                        .WithMany("Spendings")
+                        .WithMany("Expenses")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Spestqnko.Core.Models.User", "User")
-                        .WithMany("Spendings")
+                        .WithMany("Expenses")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -473,15 +466,26 @@ namespace Spestqnko.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Spestqnko.Core.Models.SpendingNotificationTreshold", b =>
+            modelBuilder.Entity("Spestqnko.Core.Models.ExpenseNotificationTreshold", b =>
                 {
                     b.HasOne("Spestqnko.Core.Models.UserWalletCategory", "UserWalletCategory")
-                        .WithMany("SpendingNotificationTresholds")
+                        .WithMany("ExpenseNotificationTresholds")
                         .HasForeignKey("UserWalletCategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("UserWalletCategory");
+                });
+
+            modelBuilder.Entity("Spestqnko.Core.Models.Notification", b =>
+                {
+                    b.HasOne("Spestqnko.Core.Models.User", "User")
+                        .WithMany("Notifications")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Spestqnko.Core.Models.UserWallet", b =>
@@ -524,16 +528,16 @@ namespace Spestqnko.Data.Migrations
 
             modelBuilder.Entity("Spestqnko.Core.Models.Category", b =>
                 {
-                    b.Navigation("Spendings");
+                    b.Navigation("Expenses");
 
                     b.Navigation("UserWalletCategories");
                 });
 
             modelBuilder.Entity("Spestqnko.Core.Models.User", b =>
                 {
-                    b.Navigation("Notifications");
+                    b.Navigation("Expenses");
 
-                    b.Navigation("Spendings");
+                    b.Navigation("Notifications");
 
                     b.Navigation("UserWallets");
                 });
@@ -545,7 +549,7 @@ namespace Spestqnko.Data.Migrations
 
             modelBuilder.Entity("Spestqnko.Core.Models.UserWalletCategory", b =>
                 {
-                    b.Navigation("SpendingNotificationTresholds");
+                    b.Navigation("ExpenseNotificationTresholds");
                 });
 
             modelBuilder.Entity("Spestqnko.Core.Models.Wallet", b =>

@@ -13,8 +13,8 @@ namespace Spestqnko.Core
         ICategoryRepository Categories { get; }
         INotificationRepository Notifications { get; }
         IRoleRepository Roles { get; }
-        ISpendingNotificationTresholdRepository SpendingNotificationTresholds { get; }
-        ISpendingRepository Spendings { get; }
+        IExpenseNotificationTresholdRepository ExpenseNotificationTresholds { get; }
+        IExpenseRepository Expenses { get; }
         IUserRepository Users { get; }
         IUserWalletCategoryRepository UserWalletCategories { get; }
         IUserWalletRepository UserWallets { get; }

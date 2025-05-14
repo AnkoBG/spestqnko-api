@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Spestqnko.Data.Migrations
 {
-    public partial class Init : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -236,26 +236,27 @@ namespace Spestqnko.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Spendings",
+                name: "Expenses",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     CategoryId = table.Column<Guid>(type: "uuid", nullable: false),
                     Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Amount = table.Column<float>(type: "real", nullable: false)
+                    Amount = table.Column<float>(type: "real", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Spendings", x => x.Id);
+                    table.PrimaryKey("PK_Expenses", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Spendings_AspNetUsers_UserId",
+                        name: "FK_Expenses_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Spendings_Categories_CategoryId",
+                        name: "FK_Expenses_Categories_CategoryId",
                         column: x => x.CategoryId,
                         principalTable: "Categories",
                         principalColumn: "Id",
@@ -289,7 +290,7 @@ namespace Spestqnko.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "SpendingNotificationTresholds",
+                name: "ExpenseNotificationTresholds",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -298,9 +299,9 @@ namespace Spestqnko.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SpendingNotificationTresholds", x => x.Id);
+                    table.PrimaryKey("PK_ExpenseNotificationTresholds", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_SpendingNotificationTresholds_UserWalletCategories_UserWall~",
+                        name: "FK_ExpenseNotificationTresholds_UserWalletCategories_UserWalle~",
                         column: x => x.UserWalletCategoryId,
                         principalTable: "UserWalletCategories",
                         principalColumn: "Id",
@@ -350,23 +351,23 @@ namespace Spestqnko.Data.Migrations
                 column: "WalletId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Notifications_UserId",
-                table: "Notifications",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_SpendingNotificationTresholds_UserWalletCategoryId",
-                table: "SpendingNotificationTresholds",
+                name: "IX_ExpenseNotificationTresholds_UserWalletCategoryId",
+                table: "ExpenseNotificationTresholds",
                 column: "UserWalletCategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Spendings_CategoryId",
-                table: "Spendings",
+                name: "IX_Expenses_CategoryId",
+                table: "Expenses",
                 column: "CategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Spendings_UserId",
-                table: "Spendings",
+                name: "IX_Expenses_UserId",
+                table: "Expenses",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Notifications_UserId",
+                table: "Notifications",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
@@ -408,13 +409,13 @@ namespace Spestqnko.Data.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "ExpenseNotificationTresholds");
+
+            migrationBuilder.DropTable(
+                name: "Expenses");
+
+            migrationBuilder.DropTable(
                 name: "Notifications");
-
-            migrationBuilder.DropTable(
-                name: "SpendingNotificationTresholds");
-
-            migrationBuilder.DropTable(
-                name: "Spendings");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

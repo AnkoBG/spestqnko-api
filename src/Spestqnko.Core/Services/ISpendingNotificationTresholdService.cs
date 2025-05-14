@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Spestqnko.Core.Services
 {
-    public interface ISpendingNotificationTresholdService : IService<SpendingNotificationTreshold>
+    public interface IExpenseNotificationTresholdService : IService<ExpenseNotificationTreshold>
     {
     }
 }
