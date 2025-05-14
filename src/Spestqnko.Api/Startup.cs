@@ -60,6 +60,7 @@ namespace Spestqnko.Api.Configurations
             services.AddScoped<IWalletRepository, WalletRepository>();
             
             services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IWalletService, WalletService>();
 
             // configure jwt authentication
             var appSettings = appSettingsSection.Get<AppSettings>();

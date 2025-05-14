@@ -1,8 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
-namespace Spestqnko.Api.Models.User
+namespace Spestqnko.Api.DTOs.User
 {
-    public class AuthenticateModel
+    public class RegisterDTO
     {
         [Required]
         public required string Username { get; set; }
@@ -10,4 +10,4 @@ namespace Spestqnko.Api.Models.User
         [Required]
         public required string Password { get; set; }
     }
-}
+} 

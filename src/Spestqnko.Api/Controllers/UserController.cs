@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Spestqnko.Api.Models.User;
+using Spestqnko.Api.DTOs.User;
 using Spestqnko.Api.Settings;
 using Spestqnko.Core.Models;
 using Spestqnko.Core.Services;
@@ -30,25 +30,17 @@ namespace Spestqnko.Api.Controllers
 
         [HttpGet]
         public async Task<ActionResult<string>> GetAll()
-        {
-            var users = await _userService.GetAll();
-
-            return Ok(users.Select(u => u.UserName));
-        }
+            => Ok((await _userService.GetAll()).Select(u => u.UserName));
 
         [HttpGet("current")]
         public ActionResult<string> GetCurrent()
-        {
-            var user = User;
-
-            return Ok(user);
-        }
+            => Ok(User);
 
         [AllowAnonymous]
         [HttpPost("authenticate")]
-        public async Task<IActionResult> Authenticate([FromBody]AuthenticateModel model)
+        public async Task<IActionResult> Authenticate([FromBody]AuthenticateDTO dto)
         {
-            var userResult = await _userService.Authenticate(model.Username, model.Password);
+            var userResult = await _userService.Authenticate(dto.Username, dto.Password);
 
             // Check if authentication returned a user (this should not happen with the current implementation 
             // as Authenticate will throw AppException for invalid credentials)
@@ -66,11 +58,8 @@ namespace Spestqnko.Api.Controllers
 
         [AllowAnonymous]
         [HttpPost("register")]
-        public async Task<ActionResult<string>> AddUserAsync([FromBody]RegisterModel model)
-        {
-            var user = await _userService.AddUserAsync(model.Username, model.Password);
-            return Ok(user.UserName);
-        }
+        public async Task<ActionResult<string>> AddUserAsync([FromBody]RegisterDTO dto)
+            => Ok((await _userService.AddUserAsync(dto.Username, dto.Password)).UserName);
 
         private string CreateJwtTokenString(User user)
         {
