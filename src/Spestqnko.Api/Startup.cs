@@ -48,7 +48,7 @@ namespace Spestqnko.Api.Configurations
             // Register DbContext for repository usage
             services.AddScoped<DbContext>(provider => provider.GetRequiredService<SpestqnkoDbContext>());
 
-            // Register repositories
+            // Register Repositories
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<INotificationRepository, NotificationRepository>();
             services.AddScoped<IRoleRepository, RoleRepository>();
@@ -59,6 +59,21 @@ namespace Spestqnko.Api.Configurations
             services.AddScoped<IUserWalletRepository, UserWalletRepository>();
             services.AddScoped<IWalletRepository, WalletRepository>();
             
+            // Register generic repositories for common entities
+            services.AddScoped<IRepository<User>, Repository<User>>();
+            services.AddScoped<IRepository<Wallet>, Repository<Wallet>>();
+            services.AddScoped<IRepository<Category>, Repository<Category>>();
+            services.AddScoped<IRepository<Expense>, Repository<Expense>>();
+            services.AddScoped<IRepository<UserWallet>, Repository<UserWallet>>();
+            services.AddScoped<IRepository<UserWalletCategory>, Repository<UserWalletCategory>>();
+            services.AddScoped<IRepository<ExpenseNotificationTreshold>, Repository<ExpenseNotificationTreshold>>();
+            services.AddScoped<IRepository<Notification>, Repository<Notification>>();
+            services.AddScoped<IRepository<Role>, Repository<Role>>();
+
+            // Register Repository Manager
+            services.AddScoped<IRepositoryManager, RepositoryManager>();
+            
+            // Register services
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IWalletService, WalletService>();
 
@@ -76,11 +91,11 @@ namespace Spestqnko.Api.Configurations
                 {
                     x.Events = new JwtBearerEvents
                     {
-                        OnTokenValidated = context =>
+                        OnTokenValidated = async context =>
                         {
                             if (context == null || context.HttpContext == null)
                             {
-                                return Task.CompletedTask;
+                                return;
                             }
 
                             var userService = context.HttpContext.RequestServices.GetRequiredService<IUserService>();
@@ -88,12 +103,12 @@ namespace Spestqnko.Api.Configurations
                             if (string.IsNullOrEmpty(identName))
                             {
                                 context.Fail("Unauthorized");
-                                return Task.CompletedTask;
+                                return;
                             }
 
                             if (Guid.TryParse(identName, out var userId))
                             {
-                                var user = userService.GetById(userId);
+                                var user = await userService.GetByIdAsync(userId);
                                 if (user == null)
                                 {
                                     context.Fail("Unauthorized"); // return unauthorized if user no longer exists
@@ -107,8 +122,6 @@ namespace Spestqnko.Api.Configurations
                             {
                                 context.Fail("Invalid user ID format");
                             }
-
-                            return Task.CompletedTask;
                         }
                     };
                     x.RequireHttpsMetadata = false;

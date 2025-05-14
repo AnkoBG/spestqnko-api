@@ -8,6 +8,9 @@ using System.Net;
 
 namespace Spestqnko.Api.Controllers
 {
+    /// <summary>
+    /// API controller for managing wallets
+    /// </summary>
     [Authorize]
     [Route("api/wallet")]
     [ApiController]
@@ -15,6 +18,11 @@ namespace Spestqnko.Api.Controllers
     {
         private readonly IWalletService _walletService;
 
+        /// <summary>
+        /// Initializes a new instance of the WalletController
+        /// </summary>
+        /// <param name="logger">The logger instance</param>
+        /// <param name="walletService">The wallet service for wallet operations</param>
         public WalletController(ILogger<WalletController> logger, IWalletService walletService)
             : base(logger)
         {
@@ -22,42 +30,74 @@ namespace Spestqnko.Api.Controllers
         }
 
         /// <summary>
-        /// Gets all wallets
+        /// Retrieves all wallets available to the current user
         /// </summary>
-        /// <returns>A list of all wallets</returns>
+        /// <remarks>
+        /// Sample request:
+        ///     GET /api/wallet
+        /// </remarks>
+        /// <returns>A collection of wallets with their properties and relationships</returns>
+        /// <response code="200">Returns the list of wallets</response>
+        /// <response code="401">If the user is not authorized</response>
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<IEnumerable<Wallet>>> GetAllWallets()
-            => Ok(await _walletService.GetAll());
+            => Ok(await _walletService.GetAllAsync());
 
         /// <summary>
-        /// Gets a specific wallet by ID
+        /// Retrieves a specific wallet by its unique identifier
         /// </summary>
-        /// <param name="id">The ID of the wallet to retrieve</param>
-        /// <returns>The wallet with the specified ID</returns>
+        /// <remarks>
+        /// Sample request:
+        ///     GET /api/wallet/3fa85f64-5717-4562-b3fc-2c963f66afa6
+        /// </remarks>
+        /// <param name="id">The unique identifier of the wallet</param>
+        /// <returns>The wallet with the specified ID including its relationships</returns>
+        /// <response code="200">Returns the requested wallet</response>
+        /// <response code="404">If the wallet is not found</response>
+        /// <response code="401">If the user is not authorized</response>
         [HttpGet("{id}")]
-        public ActionResult<Wallet> GetWalletById(Guid id)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<ActionResult<Wallet>> GetWalletById(Guid id)
         {
-            var wallet = _walletService.GetById(id);
+            var wallet = await _walletService.GetByIdAsync(id);
             
             if (wallet == null)
             {
-                throw new AppException(HttpStatusCode.NotFound, $"Wallet with ID {id} not found");
+                throw new AggregateAppException(HttpStatusCode.NotFound, $"Wallet with ID {id} not found");
             }
             
             return Ok(wallet);
         }
 
         /// <summary>
-        /// Creates a new wallet for the current user
+        /// Creates a new wallet and associates it with the current user
         /// </summary>
-        /// <param name="dto">The wallet creation details</param>
-        /// <returns>The newly created wallet</returns>
+        /// <remarks>
+        /// Sample request:
+        ///     POST /api/wallet
+        ///     {
+        ///        "name": "Household Budget",
+        ///        "monthlyIncome": 5000
+        ///     }
+        /// </remarks>
+        /// <param name="dto">The data transfer object containing wallet creation details</param>
+        /// <returns>The newly created wallet with its ID and relationships</returns>
+        /// <response code="201">Returns the newly created wallet</response>
+        /// <response code="400">If the wallet data is invalid</response>
+        /// <response code="401">If the user is not authorized</response>
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<Wallet>> CreateWallet([FromBody] CreateWalletDTO dto)
         {
             if (User == null)
             {
-                throw new AppException(HttpStatusCode.Unauthorized, "User authentication required");
+                throw new AggregateAppException(HttpStatusCode.Unauthorized, "User authentication required");
             }
 
             var wallet = await _walletService.CreateWalletAsync(dto.Name, User.Id, dto.MonthlyIncome);

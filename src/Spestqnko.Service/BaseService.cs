@@ -5,25 +5,19 @@ using Spestqnko.Core.Services;
 
 namespace Spestqnko.Service
 {
-    public abstract class BaseModelService<TEntity> : IService<TEntity> where TEntity : class, IModel
+    public abstract class BaseService<TEntity> : IService<TEntity> where TEntity : class, IModel
     {
-        protected readonly IRepository<TEntity> _repository;
-        protected readonly DbContext _dbContext;
+        protected readonly IRepositoryManager _repositoryManager;
 
-        public BaseModelService(IRepository<TEntity> repository, DbContext dbContext)
+        public BaseService(IRepositoryManager repositoryManager)
         {
-            _repository = repository;
-            _dbContext = dbContext;
+            _repositoryManager = repositoryManager;
         }
 
-        public Task<IEnumerable<TEntity>> GetAll()
-        {
-            return _repository.GetAllAsync();
-        }
+        public async Task<IEnumerable<TEntity>> GetAllAsync()
+            => await _repositoryManager.GetRepository<TEntity>().GetAllAsync();
 
-        public TEntity? GetById(Guid id)
-        {
-            return _repository.GetById(id);
-        }
+        public async Task<TEntity?> GetByIdAsync(Guid id)
+            => await _repositoryManager.GetRepository<TEntity>().GetByIdAsync(id);
     }
 }

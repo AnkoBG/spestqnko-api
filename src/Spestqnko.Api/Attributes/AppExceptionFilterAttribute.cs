@@ -5,7 +5,7 @@ using Spestqnko.Service.Exceptions;
 namespace Spestqnko.Api.Attributes
 {
     /// <summary>
-    /// Handles AppExceptions at the controller or action level.
+    /// Handles AggregateAppExceptions at the controller or action level.
     /// Can be applied to individual controllers or actions as an alternative to global middleware.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
@@ -20,19 +20,20 @@ namespace Spestqnko.Api.Attributes
 
         public override void OnException(ExceptionContext context)
         {
-            if (context.Exception is AppException appException)
+            if (context.Exception is AggregateAppException aggregateException)
             {
                 // Log the exception
-                _logger.LogError(appException, "Application error occurred: {Message}", appException.Message);
+                _logger.LogError(aggregateException, "Application error occurred: {Errors}", 
+                    string.Join("; ", aggregateException.Errors));
 
-                // Create a result with the status code from the exception
+                // Create a result with the status code from the exception and the collection of errors
                 var result = new ObjectResult(new
                 {
-                    message = appException.Message,
-                    statusCode = (int)appException.StatusCode
+                    errors = aggregateException.Errors,
+                    statusCode = (int)aggregateException.StatusCode
                 })
                 {
-                    StatusCode = (int)appException.StatusCode
+                    StatusCode = (int)aggregateException.StatusCode
                 };
 
                 // Set the result

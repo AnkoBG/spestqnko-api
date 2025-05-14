@@ -7,20 +7,11 @@ using System.Net;
 
 namespace Spestqnko.Service
 {
-    public class WalletService : BaseModelService<Wallet>, IWalletService
+    public class WalletService : BaseService<Wallet>, IWalletService
     {
-        private readonly IUserRepository _userRepository;
-        private readonly IUserWalletRepository _userWalletRepository;
-
-        public WalletService(
-            IWalletRepository walletRepository, 
-            IUserRepository userRepository,
-            IUserWalletRepository userWalletRepository,
-            DbContext dbContext)
-            : base(walletRepository, dbContext)
+        public WalletService(IRepositoryManager repositoryManager)
+            : base(repositoryManager)
         {
-            _userRepository = userRepository;
-            _userWalletRepository = userWalletRepository;
         }
 
         /// <summary>
@@ -28,16 +19,32 @@ namespace Spestqnko.Service
         /// </summary>
         public async Task<Wallet> CreateWalletAsync(string walletName, Guid userId, float monthlyIncome)
         {
+            var errors = new List<string>();
+
             if (string.IsNullOrWhiteSpace(walletName))
             {
-                throw new AppException(HttpStatusCode.BadRequest, "Wallet name is required");
+                errors.Add("Wallet name is required");
+            }
+            else if (walletName.Length < 3)
+            {
+                errors.Add("Wallet name must be at least 3 characters long");
+            }
+
+            if (monthlyIncome < 0)
+            {
+                errors.Add("Monthly income cannot be negative");
+            }
+
+            if (errors.Count > 0)
+            {
+                throw new AggregateAppException(HttpStatusCode.BadRequest, errors);
             }
 
             // Verify that the user exists
-            var user = _userRepository.GetById(userId);
+            var user = await _repositoryManager.Users.GetByIdAsync(userId);
             if (user == null)
             {
-                throw new AppException(HttpStatusCode.NotFound, $"User with ID {userId} not found");
+                throw new AggregateAppException(HttpStatusCode.NotFound, $"User with ID {userId} not found");
             }
 
             // Create the wallet
@@ -58,12 +65,12 @@ namespace Spestqnko.Service
                 MonthlyIncome = monthlyIncome
             };
 
-            // Add the entities to the context
-            await _repository.AddAsync(wallet);
-            await _userWalletRepository.AddAsync(userWallet);
+            // Add the entities
+            await _repositoryManager.Wallets.AddAsync(wallet);
+            await _repositoryManager.UserWallets.AddAsync(userWallet);
             
             // Save changes
-            await _dbContext.SaveChangesAsync();
+            await _repositoryManager.SaveChangesAsync();
 
             return wallet;
         }
