@@ -20,13 +20,12 @@ namespace Spestqnko.Data.Repositories
         public ICategoryRepository Categories => _serviceProvider.GetRequiredService<ICategoryRepository>();
         public INotificationRepository Notifications => _serviceProvider.GetRequiredService<INotificationRepository>();
         public IRoleRepository Roles => _serviceProvider.GetRequiredService<IRoleRepository>();
-        public IExpenseTresholdRepository ExpenseTresholds => _serviceProvider.GetRequiredService<IExpenseTresholdRepository>();
         public IExpenseRepository Expenses => _serviceProvider.GetRequiredService<IExpenseRepository>();
         public IUserRepository Users => _serviceProvider.GetRequiredService<IUserRepository>();
-        public IUserWalletCategoryRepository UserWalletCategories => _serviceProvider.GetRequiredService<IUserWalletCategoryRepository>();
         public IUserWalletRepository UserWallets => _serviceProvider.GetRequiredService<IUserWalletRepository>();
         public IWalletRepository Wallets => _serviceProvider.GetRequiredService<IWalletRepository>();
         public ICurrencyRepository Currencies => _serviceProvider.GetRequiredService<ICurrencyRepository>();
+        public IWalletInvitationRepository WalletInvitations => _serviceProvider.GetRequiredService<IWalletInvitationRepository>();
 
         public async Task SaveChangesAsync()
         {

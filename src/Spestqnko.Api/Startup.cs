@@ -45,6 +45,10 @@ namespace Spestqnko.Api.Configurations
             var appSettingsSection = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);
 
+            // Configure wallet invitation settings
+            var walletInvitationSection = Configuration.GetSection("WalletInvitations");
+            services.Configure<WalletInvitationSettings>(walletInvitationSection);
+
             // Register DbContext for repository usage
             services.AddScoped<DbContext>(provider => provider.GetRequiredService<SpestqnkoDbContext>());
 
@@ -52,13 +56,12 @@ namespace Spestqnko.Api.Configurations
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<INotificationRepository, NotificationRepository>();
             services.AddScoped<IRoleRepository, RoleRepository>();
-            services.AddScoped<IExpenseTresholdRepository, ExpenseTresholdRepository>();
             services.AddScoped<IExpenseRepository, ExpenseRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IUserWalletCategoryRepository, UserWalletCategoryRepository>();
             services.AddScoped<IUserWalletRepository, UserWalletRepository>();
             services.AddScoped<IWalletRepository, WalletRepository>();
             services.AddScoped<ICurrencyRepository, CurrencyRepository>();
+            services.AddScoped<IWalletInvitationRepository, WalletInvitationRepository>();
             
             // Register generic repositories for common entities
             services.AddScoped<IRepository<User>, Repository<User>>();
@@ -66,11 +69,10 @@ namespace Spestqnko.Api.Configurations
             services.AddScoped<IRepository<Category>, Repository<Category>>();
             services.AddScoped<IRepository<Expense>, Repository<Expense>>();
             services.AddScoped<IRepository<UserWallet>, Repository<UserWallet>>();
-            services.AddScoped<IRepository<UserWalletCategory>, Repository<UserWalletCategory>>();
-            services.AddScoped<IRepository<ExpenseTreshold>, Repository<ExpenseTreshold>>();
             services.AddScoped<IRepository<Notification>, Repository<Notification>>();
             services.AddScoped<IRepository<Role>, Repository<Role>>();
             services.AddScoped<IRepository<Currency>, Repository<Currency>>();
+            services.AddScoped<IRepository<WalletInvitation>, Repository<WalletInvitation>>();
 
             // Register Repository Manager
             services.AddScoped<IRepositoryManager, RepositoryManager>();
@@ -79,6 +81,8 @@ namespace Spestqnko.Api.Configurations
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IWalletService, WalletService>();
             services.AddTransient<ICurrencyService, CurrencyService>();
+            
+            services.AddHostedService<WalletInvitationCleanupService>();
 
             // configure jwt authentication
             var appSettings = appSettingsSection.Get<AppSettings>();

@@ -10,10 +10,9 @@ namespace Spestqnko.Data
         public required DbSet<Category> Categories { get; set; }
         public required DbSet<Wallet> Wallets { get; set; }
         public required DbSet<UserWallet> UserWallets { get; set; }
-        public required DbSet<UserWalletCategory> UserWalletCategories { get; set; }
-        public required DbSet<ExpenseTreshold> ExpenseTresholds { get; set; }
         public required DbSet<Notification> Notifications { get; set; }
         public required DbSet<Currency> Currencies { get; set; }
+        public required DbSet<WalletInvitation> WalletInvitations { get; set; }
 
         public SpestqnkoDbContext(DbContextOptions<SpestqnkoDbContext> options)
             : base(options)

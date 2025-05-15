@@ -15,6 +15,6 @@ namespace Spestqnko.Core.Models
 
         public string Text { get; set;} = string.Empty;
 
-        public bool Read { get; set; } = false;
+        public bool Sent { get; set; } = false;
     }
 }

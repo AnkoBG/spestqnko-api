@@ -8,17 +8,15 @@ namespace Spestqnko.Core.Models
     {
         public Guid Id { get; set; }
 
-        [Required]
         [StringLength(50)]
-        public string Name { get; set; } = string.Empty;
+        public required string Name { get; set; }
 
-        [Required]
         [StringLength(3)]
-        public string Code { get; set; } = string.Empty;
+        public required string Code { get; set; }
 
         [Required]
         [StringLength(5)]
-        public string Symbol { get; set; } = string.Empty;
+        public required string Symbol { get; set; }
 
         public List<User> Users { get; set; } = new List<User>();
         

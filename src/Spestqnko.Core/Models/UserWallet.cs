@@ -20,7 +20,5 @@ namespace Spestqnko.Core.Models
 
         [Range(0, float.MaxValue)]
         public float AllocatedIncome { get; set; }
-
-        public List<UserWalletCategory> UserWalletCategories { get; set; } = new List<UserWalletCategory>();
     }
 }
